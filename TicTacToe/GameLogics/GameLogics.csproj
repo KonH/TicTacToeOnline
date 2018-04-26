@@ -38,6 +38,7 @@
     <Compile Include="Intent.cs" />
     <Compile Include="Guard.cs" />
     <Compile Include="Logics.cs" />
+    <Compile Include="GameResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

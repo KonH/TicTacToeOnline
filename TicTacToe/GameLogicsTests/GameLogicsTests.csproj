@@ -43,6 +43,7 @@
     <Compile Include="GameStateInit.cs" />
     <Compile Include="IntentInit.cs" />
     <Compile Include="LogicTests.cs" />
+    <Compile Include="EndTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
