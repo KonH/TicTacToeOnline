@@ -13,6 +13,14 @@ namespace GameLogicsTests {
 		}
 
 		[Test]
+		public void CellsInitialized() {
+			var obj = new GameState(3, "X", "O");
+			foreach ( var cell in obj.Field.Cells ) {
+				Assert.NotNull(cell);
+			}
+		}
+
+		[Test]
 		public void NoPlayers() {
 			Assert.Throws<ArgumentException>(() => {
 				var obj = new GameState(4);

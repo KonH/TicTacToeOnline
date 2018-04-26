@@ -46,5 +46,11 @@ namespace GameLogics {
 				}
 			}
 		}
+
+		public static void Success(bool condition, string msg = "") {
+			if ( !condition ) {
+				throw new ArgumentException(msg);
+			}
+		}
 	}
 }
