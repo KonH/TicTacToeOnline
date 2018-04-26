@@ -1,0 +1,6 @@
+.DS_Store
+.vs
+*.csproj.user
+**/packages/*
+**/bin/*
+**/obj/*
