@@ -15,8 +15,10 @@ namespace GameLogicsTests {
 		[Test]
 		public void CellsInitialized() {
 			var obj = new GameState(3, "X", "O");
-			foreach ( var cell in obj.Field.Cells ) {
-				Assert.NotNull(cell);
+			for ( var x = 0; x < obj.Field.Size; x++ ) {
+				for ( var y = 0; y < obj.Field.Size; y++ ) {
+					Assert.NotNull(obj.Field.GetCellAt(x, y));
+				}
 			}
 		}
 

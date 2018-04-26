@@ -54,16 +54,16 @@ namespace GameLogicsTests {
 		[Test]
 		public void CellOwnerChanged() {
 			var state = new GameState(3, "X", "O");
-			Assert.True(state.Field.Cells[0, 0].Owner != "X");
+			Assert.True(state.Field.GetCellAt(0, 0).Owner != "X");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));
-			Assert.True(newState.Field.Cells[0, 0].Owner == "X");
+			Assert.True(newState.Field.GetCellAt(0, 0).Owner == "X");
 		}
 
 		[Test]
 		public void CellOwnerNotOverrided() {
 			var state = new GameState(3, "X", "O");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));
-			Assert.True(newState.Field.Cells[0, 0].Owner == "X");
+			Assert.True(newState.Field.GetCellAt(0, 0).Owner == "X");
 			Assert.False(Logics.IsIntentValid(newState, new Intent("O", 0, 0)));
 		}
 	}

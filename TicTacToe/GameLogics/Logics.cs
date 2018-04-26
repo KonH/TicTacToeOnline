@@ -3,11 +3,10 @@
 namespace GameLogics {
 	public static class Logics {
 		static bool IsCellClaimable(GameState state, int x, int y) {
-			var cells = state.Field.Cells;
-			if ( (x >= 0) && (y >= 0) && (cells.GetLength(0) > x) && (cells.GetLength(1) > y) ) {
-				return string.IsNullOrEmpty(cells[x, y].Owner); 
-			}
-			return false;
+			var field = state.Field;
+			var cell = field.GetCellAt(x, y);
+			return ( cell != null ) ?
+				string.IsNullOrEmpty(cell.Owner) : false;
 		}
 
 		static bool IsPlayerActive(GameState state, string playerName) {
@@ -42,11 +41,11 @@ namespace GameLogics {
 		// Is this can be generalized?
 		// TODO: helpers in Field class, one-dim array usage
 
-		static string CheckHorizontalWin(Cell[,] cells) {
-			for ( var x = 0; x < cells.GetLength(1); x++ ) {
-				var owner = cells[x, 0].Owner;
-				for ( var y = 0; y < cells.GetLength(1); y++ ) {
-					if ( cells[x, y].Owner != owner ) {
+		static string CheckHorizontalWin(Field field) {
+			for ( var x = 0; x < field.Size; x++ ) {
+				var owner = field.GetCellAt(x, 0).Owner;
+				for ( var y = 0; y < field.Size; y++ ) {
+					if ( field.GetCellAt(x, y).Owner != owner ) {
 						owner = string.Empty;
 						break;
 					}
@@ -58,11 +57,11 @@ namespace GameLogics {
 			return string.Empty;
 		}
 
-		static string CheckVerticalWin(Cell[,] cells) {
-			for ( var y = 0; y < cells.GetLength(1); y++ ) {
-				var owner = cells[0, y].Owner;
-				for ( var x = 0; x < cells.GetLength(0); x++ ) {
-					if ( cells[x, y].Owner != owner ) {
+		static string CheckVerticalWin(Field field) {
+			for ( var y = 0; y < field.Size; y++ ) {
+				var owner = field.GetCellAt(0, y).Owner;
+				for ( var x = 0; x < field.Size; x++ ) {
+					if ( field.GetCellAt(x, y).Owner != owner ) {
 						owner = string.Empty;
 						break;
 					}
@@ -74,45 +73,47 @@ namespace GameLogics {
 			return string.Empty;
 		}
 
-		static string CheckLeftDiagonalWin(Cell[,] cells) {
-			var owner = cells[0, 0].Owner;
-			for ( var i = 1; i < cells.GetLength(0); i++ ) {
-				if ( cells[i, i].Owner != owner ) {
+		static string CheckLeftDiagonalWin(Field field) {
+			var owner = field.GetCellAt(0, 0).Owner;
+			for ( var i = 1; i < field.Size; i++ ) {
+				if ( field.GetCellAt(i, i).Owner != owner ) {
 					return string.Empty;
 				}
 			}
 			return owner;
 		}
 
-		static string CheckRightDiagonalWin(Cell[,] cells) {
-			var owner = cells[0, cells.GetLength(0) - 1].Owner;
-			for (var i = 1; i < cells.GetLength(0); i++) {
-				if (cells[i, cells.GetLength(0) - 1 - i].Owner != owner) {
+		static string CheckRightDiagonalWin(Field field) {
+			var owner = field.GetCellAt(0, field.Size - 1).Owner;
+			for (var i = 1; i < field.Size; i++) {
+				if (field.GetCellAt(i, field.Size - 1 - i).Owner != owner) {
 					return string.Empty;
 				}
 			}
 			return owner;
 		}
 
-		static bool NoMoreUnclaimedCells(Cell[,] cells) {
-			foreach ( var cell in cells ) {
-				if ( string.IsNullOrEmpty(cell.Owner) ) {
-					return false;
+		static bool NoMoreUnclaimedCells(Field field) {
+			for ( var x = 0; x < field.Size; x++ ) {
+				for ( var y = 0; y < field.Size; y++ ) {
+					if ( string.IsNullOrEmpty(field.GetCellAt(x, y).Owner) ) {
+						return false;
+					}
 				}
 			}
 			return true;
 		}
 
-		static Func<Cell[,], string>[] Cases = {
+		static Func<Field, string>[] Cases = {
 			CheckHorizontalWin,
 			CheckVerticalWin,
 			CheckLeftDiagonalWin,
 			CheckRightDiagonalWin
 		};
 
-		static string TryGetWinner(Cell[,] cells) {
+		static string TryGetWinner(Field field) {
 			foreach ( var cs in Cases ) {
-				var result = cs(cells);
+				var result = cs(field);
 				if ( !string.IsNullOrEmpty(result) ) {
 					return result;
 				}
@@ -121,11 +122,11 @@ namespace GameLogics {
 		}
 
 		public static GameResult TryGetResult(GameState state) {
-			var winner = TryGetWinner(state.Field.Cells);
+			var winner = TryGetWinner(state.Field);
 			if ( !string.IsNullOrEmpty(winner) ) {
 				return new GameResult(winner);
 			}
-			if ( NoMoreUnclaimedCells(state.Field.Cells) ) {
+			if ( NoMoreUnclaimedCells(state.Field) ) {
 				return new GameResult(string.Empty);
 			}
 			return null;
