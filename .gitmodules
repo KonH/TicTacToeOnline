@@ -1,0 +1,3 @@
+[submodule "UnityClient/Assets/UDBase"]
+	path = UnityClient/Assets/UDBase
+	url = https://github.com/KonH/UDBase.git
