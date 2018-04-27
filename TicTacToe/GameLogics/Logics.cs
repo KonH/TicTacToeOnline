@@ -38,9 +38,6 @@ namespace GameLogics {
 			return newState;
 		}
 
-		// Is this can be generalized?
-		// TODO: helpers in Field class, one-dim array usage
-
 		static string CheckHorizontalWin(Field field) {
 			for ( var x = 0; x < field.Size; x++ ) {
 				var owner = field.GetCellAt(x, 0).Owner;
