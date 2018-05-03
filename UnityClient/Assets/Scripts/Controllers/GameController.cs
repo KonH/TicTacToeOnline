@@ -1,21 +1,29 @@
 ﻿using UDBase.Controllers.LogSystem;
 using UDBase.Controllers.EventSystem;
+using UDBase.Controllers.SceneSystem;
 using Zenject;
 using GameLogics;
 
 public class GameController: IInitializable, ILogContext {
 	readonly ILog   _log;
 	readonly IEvent _event;
+	readonly IScene _scene;
 
-	public int FieldSize => _state.Field.Size;
-	public int Players   => _state.Players.Count;
+	public int        FieldSize => _state.Field.Size;
+	public int        Players   => _state.Players.Count;
+	public GameResult Result    => Logics.TryGetResult(_state);
 
 	GameState _state;
 
-	public GameController(ILog log, IEvent events) {
+	public GameController(ILog log, IEvent events, IScene scene) {
 		_log   = log;
 		_event = events;
+		_scene = scene;
 
+		ResetState();
+	}
+
+	void ResetState() {
 		_state = new GameState(3, "X", "O");
 	}
 
@@ -33,5 +41,10 @@ public class GameController: IInitializable, ILogContext {
 
 	void OnStateUpdated() {
 		_event.Fire(new GameState_Updated(_state));
+	}
+
+	public void Restart() {
+		ResetState();
+		_scene.ReloadScene();
 	}
 }

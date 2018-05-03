@@ -8,6 +8,7 @@ public class GameInstaller : UDBaseInstaller {
 	public override void InstallBindings() {
 		AddUnityLogger(LogSettings);
 		AddEvents();
+		AddDirectSceneLoader();
 		AddGameController();
 	}
 
