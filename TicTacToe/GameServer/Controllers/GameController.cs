@@ -48,6 +48,45 @@ namespace GameServer.Controllers {
 			return new ConnectResponse("", "", false);
 		}
 
+		[HttpGet("state")]
+		public GameState GetState() {
+			_logger.LogDebug("GetState");
+			return _repository.State;
+		}
+
+		[HttpPost("intent")]
+		public IActionResult PostIntent([FromHeader]string playerSecret, [FromBody]Intent intent) {
+			 _logger.LogDebug($"PostIntent: '{intent}'");
+			var state = _repository.State;
+			if ( !Logics.IsIntentValid(state, intent) ) {
+				return BadRequest("Invalid intent");
+			}
+			if ( !IsPlayerSecretValid(intent.Player, playerSecret, out var error) ) {
+				return BadRequest(error);
+			}
+			_repository.State = Logics.ExecuteIntent(state, intent);
+			_logger.LogDebug("PostIndent: success");
+			return Ok();
+		}
+
+		bool IsPlayerSecretValid(string playerName, string playerSecret, out string error) {
+			if ( string.IsNullOrEmpty(playerSecret) ) {
+				error = "No player secret header";
+				return false;
+			}
+			var playerInfo = _repository.Players.Where(p => p.Name == playerName).FirstOrDefault();
+			if ( playerInfo == null ) {
+				error = "Unknown player";
+				return false;
+			}
+			if ( playerSecret != playerInfo.Secret ) {
+				error = "Invalid secred header";
+				return false;
+			}
+			error = string.Empty;
+			return true;
+		}
+
 		void TryStart() {
 			if ( (_repository.State == null) && (_repository.Players.Count >= _playerNames.Count) ) {
 				Start();

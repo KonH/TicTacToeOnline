@@ -1,6 +1,6 @@
 ﻿namespace GameLogics {
 	public sealed class Cell {
-		public string Owner { get; }
+		public string Owner { get; set; }
 
 		public Cell() {}
 

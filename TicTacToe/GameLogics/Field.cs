@@ -2,8 +2,11 @@
 
 namespace GameLogics {
 	public sealed class Field {
-		public int        Size     { get; }
-		public List<Cell> RawCells { get; }
+		public int        Size     { get; set; }
+		public List<Cell> RawCells { get; set; }
+
+		// Required for deserialization
+		public Field() { }
 
 		public Field(int size) {
 			Guard.NonLess(size, 1);

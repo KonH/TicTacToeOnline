@@ -2,9 +2,9 @@
 
 namespace GameLogics {
 	public sealed class GameState {
-		public Field        Field   { get; }
-		public List<Player> Players { get; }
-		public int          Turn    { get; }
+		public Field        Field   { get; set; }
+		public List<Player> Players { get; set; }
+		public int          Turn    { get; set; }
 
 		internal GameState(Field field, List<Player> players, int turn) {
 			Guard.NotNull(field);
@@ -17,6 +17,9 @@ namespace GameLogics {
 			Players = players;
 			Turn    = turn;
 		}
+
+		// Required for deserialization
+		public GameState() { }
 
 		public GameState(int fieldSize, params string[] players) {
 			Guard.NotNull(players);
