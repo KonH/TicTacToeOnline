@@ -1,1 +1,1 @@
-cp GameLogics/bin/Debug/GameLogics.dll ../UnityClient/Assets/Plugins
+cp GameLogics/bin/Debug/netstandard2.0/GameLogics.dll ../UnityClient/Assets/Plugins

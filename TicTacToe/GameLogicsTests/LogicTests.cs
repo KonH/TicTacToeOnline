@@ -1,28 +1,27 @@
 ﻿using System;
-using NUnit.Framework;
 using GameLogics;
+using Xunit;
 
 namespace GameLogicsTests {
-	[TestFixture]
 	public class LogicTests {
 
-		[Test]
+		[Fact]
 		public void ThrowOnInvaldIntent() {
 			Assert.False(Logics.IsIntentValid(null, null));
 			Assert.Throws<ArgumentException>(() => Logics.ExecuteIntent(null, null));
 		}
 
-		[Test]
+		[Fact]
 		public void InvalidState() {
 			Assert.False(Logics.IsIntentValid(null, new Intent("X", 0, 0)));
 		}
 
-		[Test]
+		[Fact]
 		public void InvalidIntent() {
 			Assert.False(Logics.IsIntentValid(new GameState(3, "X", "O"), null));
 		}
 
-		[Test]
+		[Fact]
 		public void WrongPlayer() {
 			// 1) "X"
 			// 2) "O"
@@ -34,7 +33,7 @@ namespace GameLogicsTests {
 			);
 		}
 
-		[Test]
+		[Fact]
 		public void PlayersCycle() {
 			// 1) "X"
 			// 2) "O"
@@ -44,14 +43,14 @@ namespace GameLogicsTests {
 			state = Logics.ExecuteIntent(state, new Intent("X", 2, 2));
 		}
 
-		[Test]
+		[Fact]
 		public void TurnChanged() {
 			var state = new GameState(3, "X", "O");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));
 			Assert.True(newState.Turn > state.Turn);
 		}
 
-		[Test]
+		[Fact]
 		public void CellOwnerChanged() {
 			var state = new GameState(3, "X", "O");
 			Assert.True(state.Field.GetCellAt(0, 0).Owner != "X");
@@ -59,7 +58,7 @@ namespace GameLogicsTests {
 			Assert.True(newState.Field.GetCellAt(0, 0).Owner == "X");
 		}
 
-		[Test]
+		[Fact]
 		public void CellOwnerNotOverrided() {
 			var state = new GameState(3, "X", "O");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));

@@ -1,11 +1,10 @@
 ﻿using GameLogics;
-using NUnit.Framework;
+using Xunit;
 
 namespace GameLogicsTests {
-	[TestFixture]
 	public class EndTests {
 
-		[Test]
+		[Fact]
 		public void WinSimple() {
 			var state = new GameState(1, "X", "O");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));
@@ -14,7 +13,7 @@ namespace GameLogicsTests {
 			Assert.True(result.IsWin);
 		}
 
-		[Test]
+		[Fact]
 		public void CorrectWinner() {
 			var state = new GameState(1, "X", "O");
 			var newState = Logics.ExecuteIntent(state, new Intent("X", 0, 0));
@@ -37,7 +36,7 @@ namespace GameLogicsTests {
 			new Intent("X", 2, 1),
 		};
 
-		[Test]
+		[Fact]
 		public void Draw() {
 			var state = new GameState(3, "X", "O");
 			foreach ( var intent in _drawIntents ) {
@@ -48,7 +47,7 @@ namespace GameLogicsTests {
 			Assert.True(result.IsDraw);
 		}
 
-		[Test]
+		[Fact]
 		public void NoWinnerInDraw() {
 			var state = new GameState(3, "X", "O");
 			foreach (var intent in _drawIntents) {
@@ -81,12 +80,12 @@ namespace GameLogicsTests {
 			new Intent("X", 0, 2)
 		};
 
-		[Test]
+		[Fact]
 		public void HorizontalWin() {
 			CheckWin(_horizontalWin, "X");
 		}
 
-		[Test]
+		[Fact]
 		public void NoIntentsAfterWin() {
 			var state = CheckWin(_horizontalWin, "X");
 			Assert.False(Logics.IsIntentValid(state, new Intent("O", 2, 0)));
@@ -103,7 +102,7 @@ namespace GameLogicsTests {
 			new Intent("X", 2, 0)
 		};
 
-		[Test]
+		[Fact]
 		public void VerticalWin() {
 			CheckWin(_verticalWin, "X");
 		}
@@ -119,7 +118,7 @@ namespace GameLogicsTests {
 			new Intent("X", 2, 2)
 		};
 
-		[Test]
+		[Fact]
 		public void DiagonalWin() {
 			CheckWin(_diagonalWin1, "X");
 		}
@@ -135,7 +134,7 @@ namespace GameLogicsTests {
 			new Intent("X", 2, 0)
 		};
 
-		[Test]
+		[Fact]
 		public void DiagonalWin2() {
 			CheckWin(_diagonalWin2, "X");
 		}
