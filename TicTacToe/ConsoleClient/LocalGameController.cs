@@ -2,10 +2,10 @@
 using GameLogics;
 
 namespace ConsoleClient {
-	public class GameController {
+	public class LocalGameController : IGameController {
 		GameState _state;
 
-		public GameController(int size, params string[] players) {
+		public LocalGameController(int size, params string[] players) {
 			_state = new GameState(size, players);
 		}
 
