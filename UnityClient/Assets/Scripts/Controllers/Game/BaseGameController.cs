@@ -7,6 +7,7 @@ public abstract class BaseGameController : IGameController {
 
 	public int        FieldSize => _state.Field.Size;
 	public int        Players   => _state.Players.Count;
+	public string TurnOwner     => _state.GetTurnOwner();
 	public GameResult Result    => Logics.TryGetResult(_state);
 
 	protected readonly ILog   _log;
