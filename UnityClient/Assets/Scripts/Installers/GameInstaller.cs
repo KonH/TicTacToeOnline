@@ -8,7 +8,7 @@ public class GameInstaller : MonoInstaller {
 
 	void AddGameController() {
 		Container.Bind(
-			typeof(IInitializable), typeof(GameController)
-		).To<GameController>().AsSingle().NonLazy();
+			typeof(IInitializable), typeof(IGameController)
+		).To<LocalGameController>().AsSingle().NonLazy();
 	}
 }

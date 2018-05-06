@@ -7,12 +7,12 @@ using UDBase.UI.Common;
 public class GameEndOverlayManager : MonoBehaviour {
 	public GameObject GameEndWindowPrefab;
 
-	GameController  _game;
-	IEvent          _events;
-	UIManager       _ui;
+	IGameController  _game;
+	IEvent           _events;
+	UIManager        _ui;
 
 	[Inject]
-	public void Init(GameController game, IEvent events, UIManager ui) {
+	public void Init(IGameController game, IEvent events, UIManager ui) {
 		_game   = game;
 		_events = events;
 		_ui     = ui;
@@ -26,7 +26,7 @@ public class GameEndOverlayManager : MonoBehaviour {
 	void OnStateUpdated(GameState_Updated e) {
 		var result = _game.Result;
 		if ( result != null ) {
-			_ui.ShowOverlay(GameEndWindowPrefab, () => _game.Restart());
+			_ui.ShowOverlay(GameEndWindowPrefab, () => _game.GoBackToMenu());
 		}
 	}
 }

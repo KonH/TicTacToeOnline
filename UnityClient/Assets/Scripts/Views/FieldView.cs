@@ -13,12 +13,12 @@ public class FieldView : MonoBehaviour, ILogContext {
 	GridLayoutGroup _grid;
 	ILog            _log;
 	IEvent          _event;
-	GameController  _game;
+	IGameController _game;
 
 	CellView[,] _cells;
 
 	[Inject]
-	public void Init(ILog log, IEvent events, GameController game) {
+	public void Init(ILog log, IEvent events, IGameController game) {
 		_trans = GetComponent<RectTransform>();
 		_grid  = GetComponent<GridLayoutGroup>();
 		_log   = log;

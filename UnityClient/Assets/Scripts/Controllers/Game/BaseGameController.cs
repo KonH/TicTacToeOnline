@@ -1,30 +1,25 @@
 ﻿using UDBase.Controllers.LogSystem;
-using UDBase.Controllers.EventSystem;
 using UDBase.Controllers.SceneSystem;
-using Zenject;
+using UDBase.Controllers.EventSystem;
 using GameLogics;
 
-public class GameController: IInitializable, ILogContext {
-	readonly ILog   _log;
-	readonly IEvent _event;
-	readonly IScene _scene;
+public abstract class BaseGameController : IGameController {
 
 	public int        FieldSize => _state.Field.Size;
 	public int        Players   => _state.Players.Count;
 	public GameResult Result    => Logics.TryGetResult(_state);
 
-	GameState _state;
+	protected readonly ILog   _log;
+	protected readonly IEvent _event;
+	protected readonly IScene _scene;
 
-	public GameController(ILog log, IEvent events, IScene scene) {
+	protected GameState _state;
+
+	public BaseGameController(ILog log, IEvent events, IScene scene, GameState state) {
 		_log   = log;
 		_event = events;
 		_scene = scene;
-
-		ResetState();
-	}
-
-	void ResetState() {
-		_state = new GameState(3, "X", "O");
+		_state = state;
 	}
 
 	public void Initialize() {
@@ -34,17 +29,17 @@ public class GameController: IInitializable, ILogContext {
 	public void OnCellClick(int x, int y) {
 		var intent = new Intent(_state.GetTurnOwner(), x, y);
 		if ( Logics.IsIntentValid(_state, intent) ) {
-			_state = Logics.ExecuteIntent(_state, intent);
-			OnStateUpdated();
+			OnValidIntentCreated(intent);
 		}
 	}
 
-	void OnStateUpdated() {
+	protected abstract void OnValidIntentCreated(Intent intent);
+
+	protected void OnStateUpdated() {
 		_event.Fire(new GameState_Updated(_state));
 	}
 
-	public void Restart() {
-		ResetState();
-		_scene.ReloadScene();
+	public void GoBackToMenu() {
+		_scene.LoadScene("MainMenu");
 	}
 }
