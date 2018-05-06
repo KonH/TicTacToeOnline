@@ -9,10 +9,16 @@ public class ProjectInstaller : UDBaseInstaller {
 		AddUnityLogger(LogSettings);
 		AddEvents();
 		AddDirectSceneLoader();
+		AddNetUtils();
 		AddModeController();
+		AddNetworkController();
 	}
 
 	void AddModeController() {
 		Container.Bind<ModeController>().To<ModeController>().AsSingle();
+	}
+
+	void AddNetworkController() {
+		Container.Bind<NetworkController>().To<NetworkController>().AsSingle();
 	}
 }
