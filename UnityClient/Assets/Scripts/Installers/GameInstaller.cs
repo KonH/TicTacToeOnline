@@ -1,14 +1,8 @@
-﻿using UDBase.Installers;
-using UDBase.Controllers.LogSystem;
-using Zenject;
+﻿using Zenject;
 
-public class GameInstaller : UDBaseInstaller {
-	public UnityLog.Settings LogSettings;
-
+public class GameInstaller : MonoInstaller {
+	
 	public override void InstallBindings() {
-		AddUnityLogger(LogSettings);
-		AddEvents();
-		AddDirectSceneLoader();
 		AddGameController();
 	}
 
