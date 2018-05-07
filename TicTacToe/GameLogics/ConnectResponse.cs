@@ -1,9 +1,11 @@
 ﻿using System;
 namespace GameLogics {
 	public class ConnectResponse {
-		public string PlayerName   { get; }
-		public string PlayerSecret { get; }
-		public bool   Connected    { get; }
+		public string PlayerName   { get; set; }
+		public string PlayerSecret { get; set; }
+		public bool   Connected    { get; set; }
+
+		public ConnectResponse() { }			
 
 		public ConnectResponse(string playerName, string playerSecret, bool connected) {
 			PlayerName   = playerName;
