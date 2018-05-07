@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 using UDBase.Utils;
 using UDBase.Controllers.LogSystem;
 using UDBase.Controllers.EventSystem;
@@ -7,6 +8,8 @@ using Zenject;
 using FullSerializer;
 
 public class NetworkController : ILogContext, ITickable {
+	const float UpdateInterval = 0.5f;
+
 	readonly string _url = "http://127.0.0.1:8080/api/game";
 
 	readonly ILog   _log;
@@ -18,6 +21,7 @@ public class NetworkController : ILogContext, ITickable {
 
 	string _playerName;
 	string _playerSecret;
+	float  _updateTimer;
 
 	public NetworkController(NetUtils netUtils, ILog log, IEvent events) {
 		_log   = log;
@@ -27,7 +31,45 @@ public class NetworkController : ILogContext, ITickable {
 	}
 
 	public void Tick() {
-		// TODO
+		if ( !string.IsNullOrEmpty(_playerName) ) {
+			_updateTimer += Time.deltaTime;
+			if ( _updateTimer > UpdateInterval ) {
+				UpdateState();
+				_updateTimer = 0.0f;
+			}
+		}
+	}
+
+	void UpdateState() {
+		_client.SendGetRequest($"{_url}/state", onComplete: OnStateUpdateComplete);
+	}
+
+	void OnStateUpdateComplete(NetUtils.Response response) {
+		_log.MessageFormat(this, "OnStateUpdateComplete: '{0}'", response.HasError ? response.Error : response.Text);
+		if ( response.HasError ) {
+			_event.Fire(new Network_Error());
+			return;
+		}
+		if ( string.IsNullOrEmpty(response.Text) ) {
+			return;
+		}
+		GameState state = null;
+
+		var fsData = fsJsonParser.Parse(response.Text);
+		var serializer = new fsSerializer();
+		var result = serializer.TryDeserialize<GameState>(fsData, ref state);
+
+		_log.MessageFormat(
+			this,
+			"Parsed state response: players: {0}, turnOwner: {1}",
+			state?.Players.Count, state?.GetTurnOwner()
+		);
+
+		if ( result.Failed ) {
+			_event.Fire(new Network_Error());
+			return;
+		}
+		_event.Fire(new Network_StateUpdated(state));
 	}
 
 	void Reset() {
@@ -56,7 +98,7 @@ public class NetworkController : ILogContext, ITickable {
 
 		_log.MessageFormat(
 			this,
-			"Parsed response: connected: {0}, name: '{1}', secret: '{2}'",
+			"Parsed connect response: connected: {0}, name: '{1}', secret: '{2}'",
 			resp?.Connected, resp?.PlayerName, resp?.PlayerSecret
 		);
 

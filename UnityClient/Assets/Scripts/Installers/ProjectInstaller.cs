@@ -19,6 +19,6 @@ public class ProjectInstaller : UDBaseInstaller {
 	}
 
 	void AddNetworkController() {
-		Container.Bind<NetworkController>().To<NetworkController>().AsSingle();
+		Container.Bind(typeof(NetworkController), typeof(ITickable)).To<NetworkController>().AsSingle();
 	}
 }

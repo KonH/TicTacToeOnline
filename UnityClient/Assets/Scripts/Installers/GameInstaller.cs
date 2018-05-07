@@ -7,8 +7,15 @@ public class GameInstaller : MonoInstaller {
 	}
 
 	void AddGameController() {
-		Container.Bind(
+		var mode = Container.Resolve<ModeController>().Mode;
+		if ( mode == GameMode.Network ) {
+			Container.Bind(
 			typeof(IInitializable), typeof(IGameController)
-		).To<LocalGameController>().AsSingle().NonLazy();
+			).To<NetworkGameController>().AsSingle().NonLazy();
+		} else {
+			Container.Bind(
+			typeof(IInitializable), typeof(IGameController)
+			).To<LocalGameController>().AsSingle().NonLazy();
+		}
 	}
 }

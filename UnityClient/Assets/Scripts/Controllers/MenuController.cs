@@ -29,6 +29,9 @@ public class MenuController : MonoBehaviour, ILogContext {
 		_event   = events;
 
 		_event.Subscribe<Network_ConnectComplete>(this, OnNetworkConnectComplete);
+		_event.Subscribe<Network_Error>          (this, OnNetworkError);
+		_event.Subscribe<Network_StateUpdated>   (this, OnNetworkStateUpdated);
+
 
 		LocalPlayButton.onClick.AddListener(OnLocalPlayButton);
 		NetworkPlayButton.onClick.AddListener(OnNetworkPlayButton);
@@ -36,6 +39,8 @@ public class MenuController : MonoBehaviour, ILogContext {
 
 	void OnDestroy() {
 		_event.Unsubscribe<Network_ConnectComplete>(OnNetworkConnectComplete);
+		_event.Unsubscribe<Network_Error>          (OnNetworkError);
+		_event.Unsubscribe<Network_StateUpdated>   (OnNetworkStateUpdated);
 	}
 
 	void OnLocalPlayButton() {
@@ -62,10 +67,24 @@ public class MenuController : MonoBehaviour, ILogContext {
 		_ui.ShowOverlay(NetworkErrorOverlay, null);
 	}
 
+	void OnNetworkError() {
+		_ui.HideAll();
+		ShowNetworkErrorOverlay();
+	}
+
 	void OnNetworkConnectComplete(Network_ConnectComplete e) {
 		if ( !e.Success ) {
-			_ui.HideAll();
-			ShowNetworkErrorOverlay();
+			OnNetworkError();
+		}
+	}
+
+	void OnNetworkError(Network_Error e) {
+		OnNetworkError();
+	}
+
+	void OnNetworkStateUpdated(Network_StateUpdated e) {
+		if ( e.State != null ) {
+			StartGame();
 		}
 	}
 }

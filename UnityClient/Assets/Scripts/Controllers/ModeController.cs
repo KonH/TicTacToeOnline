@@ -1,7 +1,8 @@
 ﻿using UDBase.Controllers.LogSystem;
 
 public enum GameMode {
-	Local
+	Local,
+	Network
 }
 
 public class ModeController : ILogContext {
