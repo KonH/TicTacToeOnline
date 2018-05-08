@@ -15,23 +15,27 @@ public class NetworkController : ILogContext, ITickable {
 	readonly ILog   _log;
 	readonly IEvent _event;
 
-	WebClient _client;
+	fsSerializer _serializer;
+	WebClient    _client;
 
 	Dictionary<string, string> _headers = new Dictionary<string, string>();
 
-	string _playerName;
 	string _playerSecret;
 	float  _updateTimer;
+
+	public string    PlayerName { get; private set; }
+	public GameState State      { get; private set; }
 
 	public NetworkController(NetUtils netUtils, ILog log, IEvent events) {
 		_log   = log;
 		_event = events;
 
-		_client = new WebClient(netUtils);
+		_serializer = new fsSerializer();
+		_client     = new WebClient(netUtils);
 	}
 
 	public void Tick() {
-		if ( !string.IsNullOrEmpty(_playerName) ) {
+		if ( !string.IsNullOrEmpty(PlayerName) ) {
 			_updateTimer += Time.deltaTime;
 			if ( _updateTimer > UpdateInterval ) {
 				UpdateState();
@@ -47,6 +51,7 @@ public class NetworkController : ILogContext, ITickable {
 	void OnStateUpdateComplete(NetUtils.Response response) {
 		_log.MessageFormat(this, "OnStateUpdateComplete: '{0}'", response.HasError ? response.Error : response.Text);
 		if ( response.HasError ) {
+			Reset();
 			_event.Fire(new Network_Error());
 			return;
 		}
@@ -56,8 +61,7 @@ public class NetworkController : ILogContext, ITickable {
 		GameState state = null;
 
 		var fsData = fsJsonParser.Parse(response.Text);
-		var serializer = new fsSerializer();
-		var result = serializer.TryDeserialize<GameState>(fsData, ref state);
+		_serializer.TryDeserialize<GameState>(fsData, ref state);
 
 		_log.MessageFormat(
 			this,
@@ -65,15 +69,16 @@ public class NetworkController : ILogContext, ITickable {
 			state?.Players.Count, state?.GetTurnOwner()
 		);
 
-		if ( result.Failed ) {
-			_event.Fire(new Network_Error());
-			return;
-		}
+		State = state;
 		_event.Fire(new Network_StateUpdated(state));
+
+		if ( Logics.TryGetResult(state) != null ) {
+			Reset();
+		}
 	}
 
 	void Reset() {
-		_playerName   = string.Empty;
+		PlayerName    = string.Empty;
 		_playerSecret = string.Empty;
 		_headers.Clear();
 	}
@@ -93,8 +98,7 @@ public class NetworkController : ILogContext, ITickable {
 		ConnectResponse resp = null;
 
 		var fsData = fsJsonParser.Parse(response.Text);
-		var serializer = new fsSerializer();
-		var result = serializer.TryDeserialize<ConnectResponse>(fsData, ref resp);
+		var result = _serializer.TryDeserialize<ConnectResponse>(fsData, ref resp);
 
 		_log.MessageFormat(
 			this,
@@ -107,7 +111,7 @@ public class NetworkController : ILogContext, ITickable {
 			return;
 		}
 
-		_playerName   = resp.PlayerName;
+		PlayerName    = resp.PlayerName;
 		_playerSecret = resp.PlayerSecret;
 
 		_headers.Add("PlayerSecret", _playerSecret);
@@ -115,4 +119,14 @@ public class NetworkController : ILogContext, ITickable {
 		_event.Fire(new Network_ConnectComplete(true));
 	}
 
+	public void SendIntent(Intent intent) {
+		fsData fsData;
+		_serializer.TrySerialize<Intent>(intent, out fsData);
+		var json = fsJsonPrinter.CompressedJson(fsData);
+		_client.SendJsonPostRequest($"{_url}/intent", json, headers: _headers, onComplete: OnSendIntentComplete);
+	}
+
+	void OnSendIntentComplete(NetUtils.Response response) {
+		_log.MessageFormat(this, "OnSendIntentComplete: '{0}'", response.HasError ? response.Error : response.Code.ToString());
+	}
 }

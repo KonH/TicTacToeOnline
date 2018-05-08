@@ -6,6 +6,7 @@ using UDBase.UI.Common;
 
 public class GameEndOverlayManager : MonoBehaviour {
 	public GameObject GameEndWindowPrefab;
+	public GameObject NetworkErrorWindowPrefab;
 
 	IGameController  _game;
 	IEvent           _events;
@@ -17,10 +18,12 @@ public class GameEndOverlayManager : MonoBehaviour {
 		_events = events;
 		_ui     = ui;
 		_events.Subscribe<GameState_Updated>(this, OnStateUpdated);
+		_events.Subscribe<Network_Error>    (this, OnNetworkError);
 	}
 
 	void OnDestroy() {
 		_events.Unsubscribe<GameState_Updated>(OnStateUpdated);
+		_events.Unsubscribe<Network_Error>    (OnNetworkError);
 	}
 
 	void OnStateUpdated(GameState_Updated e) {
@@ -28,5 +31,9 @@ public class GameEndOverlayManager : MonoBehaviour {
 		if ( result != null ) {
 			_ui.ShowOverlay(GameEndWindowPrefab, () => _game.GoBackToMenu());
 		}
+	}
+
+	void OnNetworkError(Network_Error e) {
+			_ui.ShowOverlay(NetworkErrorWindowPrefab, () => _game.GoBackToMenu());
 	}
 }

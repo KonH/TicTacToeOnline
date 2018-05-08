@@ -21,7 +21,7 @@ public class TurnView : MonoBehaviour {
 	}
 
 	void Start() {
-		UpdateTurnOwner(_game.TurnOwner);
+		UpdateTurnOwner(_game.TurnOwner, _game.IsTurnAvailable());
 	}
 
 	void OnDestroy() {
@@ -29,10 +29,13 @@ public class TurnView : MonoBehaviour {
 	}
 
 	void OnStateUpdated(GameState_Updated e) {
-		UpdateTurnOwner(e.State.GetTurnOwner());
+		UpdateTurnOwner(e.State.GetTurnOwner(), _game.IsTurnAvailable());
 	}
 
-	void UpdateTurnOwner(string owner) {
+	void UpdateTurnOwner(string owner, bool turnAvailable) {
 		_text.text = $"'{owner}' Turn";
+		if ( turnAvailable ) {
+			_text.text += " (you)";
+		}
 	}
 }

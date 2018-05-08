@@ -68,5 +68,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LogSettings:
-    EnabledByDefault: 1
-    Nodes: []
+    EnabledByDefault: 0
+    Nodes:
+    - Context:
+        classRef: FieldView, Assembly-CSharp
+      Enabled: 1
+    - Context:
+        classRef: LocalGameController, Assembly-CSharp
+      Enabled: 1
+    - Context:
+        classRef: MenuController, Assembly-CSharp
+      Enabled: 1
+    - Context:
+        classRef: ModeController, Assembly-CSharp
+      Enabled: 1
+    - Context:
+        classRef: NetworkController, Assembly-CSharp
+      Enabled: 1
+    - Context:
+        classRef: NetworkGameController, Assembly-CSharp
+      Enabled: 1

@@ -21,6 +21,8 @@ public abstract class BaseGameController : IGameController {
 		_event = events;
 		_scene = scene;
 		_state = state;
+
+		_log.Message(this, "Initialized");
 	}
 
 	public void Initialize() {
@@ -28,12 +30,16 @@ public abstract class BaseGameController : IGameController {
 	}
 
 	public void OnCellClick(int x, int y) {
+		if ( !IsTurnAvailable() ) {
+			return;
+		}
 		var intent = new Intent(_state.GetTurnOwner(), x, y);
 		if ( Logics.IsIntentValid(_state, intent) ) {
 			OnValidIntentCreated(intent);
 		}
 	}
 
+	public abstract bool IsTurnAvailable();
 	protected abstract void OnValidIntentCreated(Intent intent);
 
 	protected void OnStateUpdated() {

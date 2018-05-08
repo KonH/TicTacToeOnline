@@ -51,6 +51,7 @@ public class MenuController : MonoBehaviour, ILogContext {
 
 	void OnNetworkPlayButton() {
 		_log.Message(this, "OnNetworkPlayButton");
+		_mode.SelectGameMode(GameMode.Network);
 		ShowConnectionOverlay();
 		_network.TryConnectToServer();
 	}

@@ -664,6 +664,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameEndWindowPrefab: {fileID: 1560810682437236, guid: 964cc438699c04967a95863ff25b9a5c,
     type: 2}
+  NetworkErrorWindowPrefab: {fileID: 1773379457897022, guid: 7bcc857ae3ca24ff3a49bf1500feef7c,
+    type: 2}
 --- !u!1 &1724785665
 GameObject:
   m_ObjectHideFlags: 0

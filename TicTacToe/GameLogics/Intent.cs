@@ -1,9 +1,11 @@
 ﻿using System;
 namespace GameLogics {
 	public sealed class Intent {
-		public string Player { get; }
-		public int    PosX   { get; }
-		public int    PosY   { get; }
+		public string Player { get; set; }
+		public int    PosX   { get; set; }
+		public int    PosY   { get; set; }
+
+		public Intent() { }
 
 		public Intent(string player, int posX, int posY) {
 			Guard.NotNullOrEmpty(player);

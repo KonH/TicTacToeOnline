@@ -7,6 +7,7 @@ public interface IGameController : IInitializable, ILogContext {
 	GameResult Result    { get; }
 	string     TurnOwner { get; }
 
+	bool IsTurnAvailable();
 	void OnCellClick(int x, int y);
 	void GoBackToMenu();
 }
